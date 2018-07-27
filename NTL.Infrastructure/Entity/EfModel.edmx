@@ -1,0 +1,282 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="NetsparkerTodoDbModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'NetsparkerTodoDb.dbo.Logger' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="Logger">
+          <Key>
+            <PropertyRef Name="ErrorId" />
+            <PropertyRef Name="Application" />
+            <PropertyRef Name="Host" />
+            <PropertyRef Name="Type" />
+            <PropertyRef Name="Source" />
+            <PropertyRef Name="Message" />
+            <PropertyRef Name="User" />
+            <PropertyRef Name="StatusCode" />
+            <PropertyRef Name="TimeUtc" />
+            <PropertyRef Name="Sequence" />
+            <PropertyRef Name="AllXml" />
+          </Key>
+          <Property Name="ErrorId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Application" Type="nvarchar" MaxLength="60" Nullable="false" />
+          <Property Name="Host" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Type" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Source" Type="nvarchar" MaxLength="60" Nullable="false" />
+          <Property Name="Message" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="User" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="StatusCode" Type="int" Nullable="false" />
+          <Property Name="TimeUtc" Type="datetime" Nullable="false" />
+          <Property Name="Sequence" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="AllXml" Type="ntext" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TaskTable">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TodoId" Type="int" Nullable="false" />
+          <Property Name="Name" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Date" Type="date" />
+          <Property Name="Reminder" Type="bit" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="IsDelete" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TodoTable">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="IsDelete" Type="bit" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_TaskTable_TodoTable">
+          <End Role="TodoTable" Type="Self.TodoTable" Multiplicity="1" />
+          <End Role="TaskTable" Type="Self.TaskTable" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TodoTable">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TaskTable">
+              <PropertyRef Name="TodoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="Logger_GetErrorsXml" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Application" Type="nvarchar" Mode="In" />
+          <Parameter Name="PageIndex" Type="int" Mode="In" />
+          <Parameter Name="PageSize" Type="int" Mode="In" />
+          <Parameter Name="TotalCount" Type="int" Mode="InOut" />
+        </Function>
+        <Function Name="Logger_GetErrorXml" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Application" Type="nvarchar" Mode="In" />
+          <Parameter Name="ErrorId" Type="uniqueidentifier" Mode="In" />
+        </Function>
+        <Function Name="Logger_LogError" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ErrorId" Type="uniqueidentifier" Mode="In" />
+          <Parameter Name="Application" Type="nvarchar" Mode="In" />
+          <Parameter Name="Host" Type="nvarchar" Mode="In" />
+          <Parameter Name="Type" Type="nvarchar" Mode="In" />
+          <Parameter Name="Source" Type="nvarchar" Mode="In" />
+          <Parameter Name="Message" Type="nvarchar" Mode="In" />
+          <Parameter Name="User" Type="nvarchar" Mode="In" />
+          <Parameter Name="AllXml" Type="ntext" Mode="In" />
+          <Parameter Name="StatusCode" Type="int" Mode="In" />
+          <Parameter Name="TimeUtc" Type="datetime" Mode="In" />
+        </Function>
+        <EntityContainer Name="NetsparkerTodoDbModelStoreContainer">
+          <EntitySet Name="TaskTable" EntityType="Self.TaskTable" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TodoTable" EntityType="Self.TodoTable" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Logger" EntityType="Self.Logger" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [Logger].[ErrorId] AS [ErrorId], 
+    [Logger].[Application] AS [Application], 
+    [Logger].[Host] AS [Host], 
+    [Logger].[Type] AS [Type], 
+    [Logger].[Source] AS [Source], 
+    [Logger].[Message] AS [Message], 
+    [Logger].[User] AS [User], 
+    [Logger].[StatusCode] AS [StatusCode], 
+    [Logger].[TimeUtc] AS [TimeUtc], 
+    [Logger].[Sequence] AS [Sequence], 
+    [Logger].[AllXml] AS [AllXml]
+    FROM [dbo].[Logger] AS [Logger]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="FK_TaskTable_TodoTable" Association="Self.FK_TaskTable_TodoTable">
+            <End Role="TodoTable" EntitySet="TodoTable" />
+            <End Role="TaskTable" EntitySet="TaskTable" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="NetsparkerTodoDbModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="NetsparkerTodoDbEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Loggers" EntityType="NetsparkerTodoDbModel.Logger" />
+          <FunctionImport Name="Logger_GetErrorsXml" ReturnType="Collection(String)">
+            <Parameter Name="Application" Mode="In" Type="String" />
+            <Parameter Name="PageIndex" Mode="In" Type="Int32" />
+            <Parameter Name="PageSize" Mode="In" Type="Int32" />
+            <Parameter Name="TotalCount" Mode="InOut" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="Logger_GetErrorXml" ReturnType="Collection(String)">
+            <Parameter Name="Application" Mode="In" Type="String" />
+            <Parameter Name="ErrorId" Mode="In" Type="Guid" />
+          </FunctionImport>
+          <FunctionImport Name="Logger_LogError">
+            <Parameter Name="ErrorId" Mode="In" Type="Guid" />
+            <Parameter Name="Application" Mode="In" Type="String" />
+            <Parameter Name="Host" Mode="In" Type="String" />
+            <Parameter Name="Type" Mode="In" Type="String" />
+            <Parameter Name="Source" Mode="In" Type="String" />
+            <Parameter Name="Message" Mode="In" Type="String" />
+            <Parameter Name="User" Mode="In" Type="String" />
+            <Parameter Name="AllXml" Mode="In" Type="String" />
+            <Parameter Name="StatusCode" Mode="In" Type="Int32" />
+            <Parameter Name="TimeUtc" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <EntitySet Name="TaskTables" EntityType="NetsparkerTodoDbModel.TaskTable" />
+          <EntitySet Name="TodoTables" EntityType="NetsparkerTodoDbModel.TodoTable" />
+          <AssociationSet Name="FK_TaskTable_TodoTable" Association="NetsparkerTodoDbModel.FK_TaskTable_TodoTable">
+            <End Role="TodoTable" EntitySet="TodoTables" />
+            <End Role="TaskTable" EntitySet="TaskTables" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Logger">
+          <Key>
+            <PropertyRef Name="ErrorId" />
+            <PropertyRef Name="Application" />
+            <PropertyRef Name="Host" />
+            <PropertyRef Name="Type" />
+            <PropertyRef Name="Source" />
+            <PropertyRef Name="Message" />
+            <PropertyRef Name="User" />
+            <PropertyRef Name="StatusCode" />
+            <PropertyRef Name="TimeUtc" />
+            <PropertyRef Name="Sequence" />
+            <PropertyRef Name="AllXml" />
+          </Key>
+          <Property Name="ErrorId" Type="Guid" Nullable="false" />
+          <Property Name="Application" Type="String" Nullable="false" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="Host" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Type" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Source" Type="String" Nullable="false" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="Message" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="User" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="StatusCode" Type="Int32" Nullable="false" />
+          <Property Name="TimeUtc" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Sequence" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AllXml" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="TaskTable">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TodoId" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Date" Type="DateTime" Precision="0" />
+          <Property Name="Reminder" Type="Boolean" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="IsDelete" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="TodoTable" Relationship="NetsparkerTodoDbModel.FK_TaskTable_TodoTable" FromRole="TaskTable" ToRole="TodoTable" />
+        </EntityType>
+        <EntityType Name="TodoTable">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="IsDelete" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="TaskTables" Relationship="NetsparkerTodoDbModel.FK_TaskTable_TodoTable" FromRole="TodoTable" ToRole="TaskTable" />
+        </EntityType>
+        <Association Name="FK_TaskTable_TodoTable">
+          <End Type="NetsparkerTodoDbModel.TodoTable" Role="TodoTable" Multiplicity="1" />
+          <End Type="NetsparkerTodoDbModel.TaskTable" Role="TaskTable" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TodoTable">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TaskTable">
+              <PropertyRef Name="TodoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="NetsparkerTodoDbModelStoreContainer" CdmEntityContainer="NetsparkerTodoDbEntities">
+          <EntitySetMapping Name="Loggers">
+            <EntityTypeMapping TypeName="NetsparkerTodoDbModel.Logger">
+              <MappingFragment StoreEntitySet="Logger">
+                <ScalarProperty Name="AllXml" ColumnName="AllXml" />
+                <ScalarProperty Name="Sequence" ColumnName="Sequence" />
+                <ScalarProperty Name="TimeUtc" ColumnName="TimeUtc" />
+                <ScalarProperty Name="StatusCode" ColumnName="StatusCode" />
+                <ScalarProperty Name="User" ColumnName="User" />
+                <ScalarProperty Name="Message" ColumnName="Message" />
+                <ScalarProperty Name="Source" ColumnName="Source" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="Host" ColumnName="Host" />
+                <ScalarProperty Name="Application" ColumnName="Application" />
+                <ScalarProperty Name="ErrorId" ColumnName="ErrorId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="Logger_GetErrorsXml" FunctionName="NetsparkerTodoDbModel.Store.Logger_GetErrorsXml" />
+          <FunctionImportMapping FunctionImportName="Logger_GetErrorXml" FunctionName="NetsparkerTodoDbModel.Store.Logger_GetErrorXml" />
+          <FunctionImportMapping FunctionImportName="Logger_LogError" FunctionName="NetsparkerTodoDbModel.Store.Logger_LogError" />
+          <EntitySetMapping Name="TaskTables">
+            <EntityTypeMapping TypeName="NetsparkerTodoDbModel.TaskTable">
+              <MappingFragment StoreEntitySet="TaskTable">
+                <ScalarProperty Name="IsDelete" ColumnName="IsDelete" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Reminder" ColumnName="Reminder" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="TodoId" ColumnName="TodoId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TodoTables">
+            <EntityTypeMapping TypeName="NetsparkerTodoDbModel.TodoTable">
+              <MappingFragment StoreEntitySet="TodoTable">
+                <ScalarProperty Name="IsDelete" ColumnName="IsDelete" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
